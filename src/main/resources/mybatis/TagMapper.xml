@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+  
+<mapper namespace="com.ziqiang.mapper.TagMapper">
+	
+	<resultMap type="com.ziqiang.model.Article" id="Article">
+		<id column="id" property="id" />
+		<result column="categoryId" property="categoryId" />
+		<result column="categoryName" property="categoryName" />
+		<result column="aliasName" property="aliasName" />
+		<result column="title" property="title" />
+		<result column="author" property="author" />
+		<result column="statue" property="statue" />
+		<result column="showCount" property="showCount" />
+		<result column="content" property="content" typeHandler="com.ziqiang.util.ConvertBlobTypeHandler" />
+	</resultMap>
+	
+	<select id="getTagCount" parameterType="map" resultType="int">
+		select count(1) from t_tag  
+		where 1 = 1 
+		<if test="null != tag.tagName and '' != tag.tagName">
+			<![CDATA[ and tagName like concat('%', #{tag.tagName}, '%')]]>
+		</if>
+	</select>
+	
+	<select id="getLastTagArticleList" parameterType="map" resultMap="Article">
+		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
+		a.*,c.categoryName,c.aliasName from t_article a 
+		inner join t_category c on a.categoryId = c.id 
+		inner join t_article_tag t on a.id = t.articleId 
+		inner join t_tag ta on t.tagId = ta.id  
+		where 1 = 1 and a.statue = 0 
+		<if test="tagId != null and tagId !='-1'">
+			and ta.id = #{tagId}
+		</if>
+		<if test="articleId != null">
+			<![CDATA[and a.id < #{articleId}]]>
+		</if>
+		order by a.id desc 
+		limit 10 
+	</select>
+	
+	<select id="getTagById" parameterType="string" resultType="com.ziqiang.model.Tag">
+		select * from t_tag where id = #{id}
+	</select>
+	
+	<select id="getTagByName" parameterType="string" resultType="com.ziqiang.model.Tag">
+		select * from t_tag where tagName = #{tagName}
+	</select>
+	
+	<select id="getTagList" parameterType="map" resultType="com.ziqiang.model.Tag">
+		select * from t_tag 
+		where 1 = 1 
+		<if test="null != tag.tagName and '' != tag.tagName">
+			<![CDATA[ and tagName like concat('%', #{tag.tagName}, '%')]]>
+		</if>
+		order by id desc 
+		limit #{start},#{limit}
+	</select>
+	
+	<insert id="addTag" parameterType="com.ziqiang.model.Tag" >
+		<![CDATA[
+			insert into t_tag 
+			(tagName) 
+				values 
+			(#{tagName})
+		]]> 
+		<selectKey resultType="int" keyProperty="id">
+			<![CDATA[
+			SELECT LAST_INSERT_ID() as id 
+			]]> 
+		</selectKey>
+	</insert>
+	
+	<delete id="deleteTag" parameterType="string">
+		delete from t_tag where id = #{id}	
+	</delete>
+	
+	<update id="editTag" parameterType="com.ziqiang.model.Tag">
+		update t_tag   
+			set tagName = #{tagName} 
+		where id = #{id}
+	</update>
+	
+	<select id="getAllTagList" resultType="com.ziqiang.model.Tag">
+		select * from t_tag order by id
+	</select>
+	
+	<select id="getArticleTagList" parameterType="string" resultType="com.ziqiang.model.Tag">
+		select ta.* from t_article_tag aat 
+		inner join t_tag ta on aat.tagId = ta.id 
+		where aat.articleId = #{id}
+	</select>
+
+</mapper>

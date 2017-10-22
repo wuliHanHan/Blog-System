@@ -1,0 +1,7 @@
+缓存的使用, 在取得category和friend列表时
+service上的事务注解
+AdminController的login方法实例化Manager
+日志是何时加载的
+js/article/article_list.js, 完成了home.jsp里的内容展示
+web.xml 里的error page
+js/plugins/toastr/toastr.min.js控制用户名错误的展现
