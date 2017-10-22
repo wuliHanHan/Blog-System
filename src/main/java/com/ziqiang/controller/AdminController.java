@@ -16,6 +16,7 @@ import com.ziqiang.util.config.CompositeFactory;
 
 @Controller
 public class AdminController {
+	
 	@Autowired
 	private AdminService adminService;
 	
