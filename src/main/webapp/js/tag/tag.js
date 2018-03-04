@@ -22,8 +22,9 @@ function loadTagList(){
 	
 	// 查询列表
 	$.ajax({
-        url : '../tag/load',
+        url : 'http://localhost:8080/my-blog/admin/tag/load',
         data : 'page='+page+"&param="+param,
+        type : "post",
         success  : function(data) {
         	$("#dataList").html(data);
 		}
@@ -97,6 +98,8 @@ function saveEditTag(){
 	        		$('#editTagModal').modal('hide');
 	            	loadTagList();
 	            	autoCloseAlert(data.errorInfo,1000);
+	        	}else if(data.resultCode == 'exist'){
+	        		autoCloseAlert("标签已存在,保存失败",1000);
 	        	}else{
 	        		autoCloseAlert(data.errorInfo,1000);
 	        	}
@@ -116,6 +119,8 @@ function saveAddTag(){
 	        		$('#addTagModal').modal('hide');
 	            	loadTagList();
 	            	autoCloseAlert(data.errorInfo,1000);
+	        	}else if(data.resultCode == 'exist'){
+	        		autoCloseAlert("标签已存在,保存失败",1000);
 	        	}else{
 	        		autoCloseAlert(data.errorInfo,1000);
 	        	}

@@ -19,6 +19,7 @@
      * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
      * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
+	window.UEDITOR_HOME_URL = "http://localhost:8080/my-blog/js/ueditor1_4_3/";
     var URL = window.UEDITOR_HOME_URL || getUEBasePath();
 
     /**
@@ -58,8 +59,8 @@
 
         //主题配置项,默认是default。有需要的话也可以使用如下这样的方式来自动多主题切换，当然，前提条件是themes文件夹下存在对应的主题文件：
         //现有如下皮肤:default
-        //,theme:'default'
-        //,themePath:URL +"themes/"
+        ,theme:'default'
+        ,themePath:URL +"themes/"
 
         //,zIndex : 900     //编辑器层级的基数,默认是900
 
@@ -300,7 +301,7 @@
         //autotypeset
         //自动排版参数
         //,autotypeset: {
-        //    mergeEmptyline: true,           //合并空行
+         //   mergeEmptyline: true,           //合并空行
         //    removeClass: true,              //去掉冗余的class
         //    removeEmptyline: false,         //去掉空行
         //    textAlign:"left",               //段落的排版方式，可以是 left,right,center,justify 去掉这个属性表示不执行排版

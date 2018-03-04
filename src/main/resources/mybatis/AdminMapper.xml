@@ -1,15 +1,68 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
-  
-<mapper namespace="com.ziqiang.mapper.AdminMapper">
-	
-	<select id="validateManager" parameterType="com.ziqiang.model.Manager" resultType="int">
-		select count(1) from t_manager where userName = #{userName} and password = #{password}	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.dao.AdminMapper">
+	<resultMap type="com.blog.model.Manager" id="Manager">
+		<id column="id" property="id" />
+		<result column="userName" property="userName" />
+		<result column="password" property="password" />
+	</resultMap>
+	<select id="validateManager" parameterType="com.blog.model.Manager"
+		resultType="int">
+		select count(1) from t_manager where userName= #{userName}
+		and password = #{password}
 	</select>
-	
-	<select id="getManagerInfo" parameterType="com.ziqiang.model.Manager" resultType="com.ziqiang.model.Manager">
+
+	<select id="getManagerInfo" parameterType="com.blog.model.Manager"
+		resultType="com.blog.model.Manager">
+		select * from t_manager where userName= #{userName} and
+		password = #{password}
+	</select>
+
+	<select id="getAllManagerList" resultType="com.blog.model.Manager">
+		select * from
+		t_manager order by id
+	</select>
+
+	<update id="updateManager" parameterType="com.blog.model.Manager">
+		update t_manager set
+		userName = #{userName},password = #{password} where id = #{id};
+	</update>
+
+	<select id="getManagerCount" parameterType="map" resultType="int">
+		select count(1) from t_manager
+		where 1 = 1
+		<if test="null != manager.userName and '' != manager.userName">
+			<![CDATA[ and userName like concat('%', #{manager.userName}, '%')]]>
+		</if>
+	</select>
+	<insert id="addManager" parameterType="com.blog.model.Manager">
+		insert into t_manager   
+		(userName,password) 
+		values 
+		(#{userName},#{password})
+	</insert>
+	<select id="getManagerList" parameterType="map"
+		resultType="com.blog.model.Manager">
+		select * from t_manager
+		where 1 = 1
+		<if test="null != m.userName and '' != m.userName">
+			<![CDATA[ and userName like concat('%', #{m.userName}, '%')]]>
+		</if>
+		order by id desc
+		limit #{start},#{limit}
+	</select>
+	<delete id="deleteManager" parameterType="string">
+		delete from t_manager
+		where id = #{id}
+	</delete>
+	<select id="getManagerById" parameterType="string"
+		resultType="com.blog.model.Manager">
+		select * from t_manager where id = #{id}
+	</select>
+		<select id="getManagerByUserName" parameterType="string"
+		resultType="com.blog.model.Manager">
 		select * from t_manager where userName = #{userName}
 	</select>
-		
 </mapper>

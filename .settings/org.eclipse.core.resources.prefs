@@ -1,6 +1,11 @@
 eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
+encoding//src/main/resources/sysconfig.properties=UTF-8
+encoding//src/main/webapp/WEB-INF/admin/admin_edit.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/admin/skin.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/blog/tag/tag_detail.jsp=UTF-8
+encoding//src/main/webapp/xiu/style.css=UTF-8
 encoding//src/test/java=UTF-8
 encoding//src/test/resources=UTF-8
 encoding/<project>=UTF-8

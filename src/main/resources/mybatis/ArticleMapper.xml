@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
-  
-<mapper namespace="com.ziqiang.mapper.ArticleMapper">
-	
-	<resultMap type="com.ziqiang.model.Article" id="Article">
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.dao.ArticleMapper">
+
+	<resultMap type="com.blog.model.Article" id="Article">
 		<id column="id" property="id" />
 		<result column="categoryId" property="categoryId" />
 		<result column="categoryName" property="categoryName" />
@@ -13,191 +13,213 @@
 		<result column="author" property="author" />
 		<result column="statue" property="statue" />
 		<result column="showCount" property="showCount" />
-		<result column="content" property="content" typeHandler="com.ziqiang.util.ConvertBlobTypeHandler" />
+		<result column="content" property="content"
+			typeHandler="com.blog.util.ConvertBlobTypeHandler" />
 	</resultMap>
-	
+
 	<select id="getArticleCount" parameterType="map" resultType="int">
-		select count(1) from t_article a 
-		inner join t_category c on a.categoryId = c.id 
-		where 1 = 1 
+		select count(1) from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where 1 = 1
 		<if test="null != article.tagId and '-1' != article.tagId">
-			and exists (select 1 from t_article_tag at where at.articleId = a.id and at.tagId = #{article.tagId})
+			and exists (select 1 from t_article_tag at where
+			at.articleId = a.id and at.tagId = #{article.tagId})
 		</if>
 		<if test="null != article.title and '' != article.title">
 			<![CDATA[ and a.title like concat('%', #{article.title}, '%')]]>
 		</if>
 		<if test="null != article.categoryId and '-1' != article.categoryId">
-			and a.categoryId = #{article.categoryId} 
+			and a.categoryId = #{article.categoryId}
 		</if>
 	</select>
-	
+
 	<select id="getAllArticleCount" parameterType="map" resultType="int">
-		select count(1) from t_article a 
-		inner join t_category c on a.categoryId = c.id 
+		select count(1) from t_article a
+		inner join t_category c on a.categoryId = c.id
 		<if test="categoryId != null and categoryId !='-1'">
 			and c.id = #{categoryId}
 		</if>
-		where 1 = 1 
+		where 1 = 1
 	</select>
 
 	<select id="getLastArticleList" parameterType="map" resultMap="Article">
 		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
-		a.*,c.categoryName,c.aliasName from t_article a 
+		a.*,c.categoryName,c.aliasName from t_article a
 		inner join t_category c on a.categoryId = c.id
-		where 1 = 1
+		where 1 = 1 and a.statue = 0
 		<if test="categoryId != null and categoryId !='-1'">
-			 and c.id = #{categoryId}
+			and c.id = #{categoryId}
 		</if>
 		<if test="articleId != null">
 			<![CDATA[and a.id < #{articleId}]]>
 		</if>
-		order by a.id desc 
-		limit 10 
+		order by a.id desc
+		limit 10
 	</select>
-	
+
 	<select id="getNextArticle" parameterType="map" resultMap="Article">
 		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
-		a.*,c.categoryName,c.aliasName from t_article a 
-		inner join t_category c on a.categoryId = c.id 
-		where 1 = 1  and a.statue = 0 
+		a.*,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where 1 = 1 and a.statue = 0
 		<if test="categoryId != null and categoryId !='-1'">
 			and c.id = #{categoryId}
 		</if>
 		<if test="articleId != null">
 			<![CDATA[and a.id > #{articleId}]]>
 		</if>
-		order by a.id asc 
-		limit 1 
+		order by a.id asc
+		limit 1
 	</select>
-	
+
 	<select id="getBeforeArticle" parameterType="map" resultMap="Article">
 		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
-		a.*,c.categoryName,c.aliasName from t_article a 
-		inner join t_category c on a.categoryId = c.id 
-		where 1 = 1  and a.statue = 0 
+		a.*,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where 1 = 1 and a.statue = 0
 		<if test="categoryId != null and categoryId !='-1'">
 			and c.id = #{categoryId}
 		</if>
 		<if test="articleId != null">
 			<![CDATA[and a.id < #{articleId}]]>
 		</if>
-		order by a.id desc  
-		limit 1 
+		order by a.id desc
+		limit 1
 	</select>
 
-	<select id="getRelationArticleList" parameterType="map" resultMap="Article">
+	<select id="getRelationArticleList" parameterType="map"
+		resultMap="Article">
 		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
-		a.*,c.categoryName,c.aliasName from t_article a 
-		inner join t_category c on a.categoryId = c.id 
-		where 1 = 1  and a.statue = 0 
+		a.*,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where 1 = 1 and a.statue = 0
 		<if test="categoryId != null and categoryId !='-1'">
 			and c.id = #{categoryId}
 		</if>
 		<if test="articleId != null">
 			<![CDATA[and a.id != #{articleId}]]>
 		</if>
-		order by rand() LIMIT 4 
+		order by rand() LIMIT 4
 	</select>
-	
+
 	<select id="getArticleById" parameterType="string" resultMap="Article">
 		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
-		a.*,c.id as categoryId,c.categoryName,c.aliasName from t_article a 
-		inner join t_category c on a.categoryId = c.id 
+		a.*,c.id as categoryId,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
 		where a.id = #{id}
 	</select>
-	
-	<select id="getArticleImageUrl" parameterType="string" resultType="string">
-		select imageUrl from t_article_image where articleId = #{id} limit 1
-	</select>
-	
-	<select id="getArticleList" parameterType="map" resultType="com.ziqiang.model.Article">
+	<select id="getArticleByTitle" parameterType="string" resultMap="Article">
 		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
-		a.*,c.categoryName,c.aliasName from t_article a 
-		inner join t_category c on a.categoryId = c.id 
-		where 1 = 1 
+		a.*,c.id as categoryId,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where a.title = #{title}
+	</select>
+	<select id="getArticleImageUrl" parameterType="string"
+		resultType="string">
+		select imageUrl from t_article_image where articleId =
+		#{id} limit 1
+	</select>
+
+	<select id="getArticleList" parameterType="map"
+		resultType="com.blog.model.Article">
+		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
+		a.*,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where 1 = 1
 		<if test="null != article.tagId and '-1' != article.tagId">
-			and exists (select 1 from t_article_tag at where at.articleId = a.id and at.tagId = #{article.tagId})
+			and exists (select 1 from t_article_tag at where
+			at.articleId = a.id and at.tagId = #{article.tagId})
 		</if>
 		<if test="null != article.title and '' != article.title">
 			<![CDATA[ and a.title like concat('%', #{article.title}, '%')]]>
 		</if>
 		<if test="null != article.categoryId and '-1' != article.categoryId">
-			and a.categoryId = #{article.categoryId} 
+			and a.categoryId = #{article.categoryId}
 		</if>
-		order by a.id desc 
+		order by a.id desc
 		limit #{start},#{limit}
 	</select>
-	
-	<select id="getAllArticleList" parameterType="map" resultType="com.ziqiang.model.Article">
-		select * from t_article  
+
+	<select id="getAllArticleList" parameterType="map"
+		resultType="com.blog.model.Article">
+		select * from t_article
 		order by id desc
 	</select>
-	
-	<insert id="addArticle" parameterType="com.ziqiang.model.Article" >
+
+	<insert id="addArticle" parameterType="com.blog.model.Article">
 		<![CDATA[
 			insert into t_article 
 			(categoryId,title,content,createTime,showCount,statue,description) 
 				values 
 			(#{categoryId},#{title},#{content},now(),0,0,#{description})
-		]]> 
+		]]>
 		<selectKey resultType="int" keyProperty="id">
 			<![CDATA[
 			SELECT LAST_INSERT_ID() as id 
-			]]> 
+			]]>
 		</selectKey>
 	</insert>
-	
+
 	<delete id="deleteArticle" parameterType="string">
-		delete from t_article where id = #{id}	
+		delete from t_article
+		where id = #{id}
 	</delete>
-	
-	<update id="editArticle" parameterType="com.ziqiang.model.Article">
-		update t_article  
-			set categoryId = #{categoryId},
-			title = #{title},
-			content = #{content},
-			description = #{description} 
+
+	<update id="editArticle" parameterType="com.blog.model.Article">
+		update t_article
+		set categoryId = #{categoryId},
+		title = #{title},
+		content = #{content},
+		description = #{description}
 		where id = #{id}
 	</update>
-	
-	<update id="updateStatue" parameterType="com.ziqiang.model.Article">
-		update t_article set statue = #{statue}  
+
+	<update id="updateStatue" parameterType="com.blog.model.Article">
+		update t_article set
+		statue = #{statue}
 		where id = #{id}
 	</update>
-	
+
 	<update id="incrArticleShowCount" parameterType="string">
-		update t_article set showCount = showCount + 1   
+		update t_article
+		set showCount = showCount + 1
 		where id = #{id}
 	</update>
-	
-	<insert id="addArticleTag" parameterType="com.ziqiang.model.Article" >
-			insert into t_article_tag  
-			(articleId,tagId) 
-				values 
-			(#{id},#{tagId})
+
+	<insert id="addArticleTag" parameterType="com.blog.model.Article">
+		insert into t_article_tag
+		(articleId,tagId)
+		values
+		(#{id},#{tagId})
 	</insert>
-	
-	<delete id="deleteArticleTag" parameterType="com.ziqiang.model.Article" >
-		delete from t_article_tag where articleId = #{id}
-	</delete>
-	
-	<delete id="deleteArticleTagById" parameterType="string" >
+
+	<delete id="deleteArticleTag" parameterType="com.blog.model.Article">
 		delete from t_article_tag where articleId = #{id}
 	</delete>
 
-	<delete id="deleteArticleImageById" parameterType="string" >
+	<delete id="deleteArticleTagById" parameterType="string">
+		delete
+		from t_article_tag where articleId = #{id}
+	</delete>
+
+	<delete id="deleteArticleImageById" parameterType="string">
 		delete from t_article_image where articleId = #{id}
 	</delete>
-	
-	<delete id="deleteArticleImage" parameterType="com.ziqiang.model.Article" >
+
+	<delete id="deleteArticleImage" parameterType="com.blog.model.Article">
 		delete from t_article_image where articleId = #{id}
 	</delete>
-	
-	<insert id="addArticleImage" parameterType="com.ziqiang.model.Article" >
-			insert into t_article_image   
-			(imageUrl,articleId) 
-				values 
-			(#{imageUrl},#{id})
+
+	<insert id="addArticleImage" parameterType="com.blog.model.Article">
+		insert into t_article_image
+		(imageUrl,articleId)
+		values
+		(#{imageUrl},#{id})
 	</insert>
-	
+	<select id="getArticleListByTitle" parameterType="string" resultType="Article">
+		select DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
+		a.*,c.id as categoryId,c.categoryName,c.aliasName from t_article a
+		inner join t_category c on a.categoryId = c.id
+		where a.title like concat('%', #{title,jdbcType=VARCHAR}, '%')
+	</select>
 </mapper>

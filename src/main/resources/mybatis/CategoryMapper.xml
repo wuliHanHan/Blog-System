@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
-  
-<mapper namespace="com.ziqiang.mapper.CategoryMapper">
-	
-	<select id="getCategoryList" resultType="com.ziqiang.model.Category">
-		select * from t_category order by sort desc 
-	</select>	
-	
-	<select id="getCategoryByAlias" parameterType="string" resultType="com.ziqiang.model.Category">
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.dao.CategoryMapper">
+
+	<select id="getCategoryList" resultType="com.blog.model.Category">
+		select * from t_category
+		order by sort desc
+	</select>
+
+	<select id="getByName" parameterType="string" resultType="com.blog.model.Category">
+		select
+		* from t_category where categoryName = #{categoryName}
+	</select>
+	<delete id="deleteCategory" parameterType="string">
+		delete from t_category
+		where id = #{id}
+	</delete>
+	<select id="getCategoryByAlias" parameterType="string"
+		resultType="com.blog.model.Category">
 		select * from t_category where aliasName = #{aliasName}
 	</select>
-		
+
+	<select id="getCategoryCount" parameterType="map" resultType="int">
+		select count(1) from t_category
+		where 1 = 1
+		<if test="null != category.categoryName and '' != category.categoryName">
+			<![CDATA[ and categoryName like concat('%', #{category.categoryName}, '%')]]>
+		</if>
+	</select>
+
+	<select id="getMaxSort" resultType="int">
+		select Max(sort) from
+		t_category
+	</select>
+
+	<select id="getCategoryListByPage" parameterType="map"
+		resultType="com.blog.model.Category">
+		select * from t_category
+		where 1 = 1
+		<if test="null != category.categoryName and '' != category.categoryName">
+			<![CDATA[ and categoryName like concat('%', #{category.categoryName}, '%')]]>
+		</if>
+		order by sort desc
+		limit #{start},#{limit}
+	</select>
+	<insert id="addCategory" parameterType="com.blog.model.Category">
+		<![CDATA[
+			insert into t_category 
+			(categoryName,iconClass,aliasName,sort) 
+				values 
+			(#{categoryName},'1',#{aliasName},#{sort})
+		]]>
+		<selectKey resultType="int" keyProperty="id">
+			<![CDATA[
+			SELECT LAST_INSERT_ID() as id 
+			]]>
+		</selectKey>
+	</insert>
+	<select id="getCategoryById" parameterType="string"
+		resultType="com.blog.model.Category">
+		select * from t_category where id = #{id}
+	</select>
+	<update id="editCategory" parameterType="com.blog.model.Category">
+		update t_category
+		set
+		categoryName = #{categoryName},aliasName=#{aliasName}
+		where id = #{id}
+	</update>
 </mapper>

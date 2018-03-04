@@ -24,6 +24,7 @@ function loadPartnerList(){
 	$.ajax({
         url : '../friend/load',
         data : 'page='+page+"&param="+param,
+        type : "post",
         success  : function(data) {
         	$("#dataList").html(data);
 		}

@@ -2,14 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
   
-<mapper namespace="com.ziqiang.mapper.FriendMapper">
+<mapper namespace="com.blog.dao.FriendMapper">
 	
-	<select id="getAllFriendList" resultType="com.ziqiang.model.Friend">
+	<select id="getFriendCount" parameterType="map" resultType="int">
+		select count(1) from t_friend  
+		where 1 = 1
+		<if test="null != friend.siteName and '' != friend.siteName">
+			<![CDATA[ and siteName like concat('%', #{friend.siteName}, '%')]]>
+		</if>
+	</select>
+	
+	<select id="getFriendList" parameterType="map" resultType="com.blog.model.Friend">
+		select * from t_friend  
+		where 1 = 1 
+		<if test="null != friend.siteName and '' != friend.siteName">
+			<![CDATA[ and siteName like concat('%', #{friend.siteName}, '%')]]>
+		</if>
+		order by id desc 
+		limit #{start},#{limit}
+	</select>
+	
+	<select id="getAllFriendList" resultType="com.blog.model.Friend">
 		select * from t_friend order by sort desc
-	</select>	
+	</select>
 	
-	<!-- <select id="getCategoryByAlias" parameterType="string" resultType="com.supr.model.Category">
-		select * from t_category where aliasName = #{aliasName}
-	</select> -->
-		
+	<insert id="addFriend" parameterType="com.blog.model.Friend">
+		insert into t_friend     
+		(siteName,siteUrl,siteDesc,sort) 
+		values 
+		(#{siteName},#{siteUrl},#{siteDesc},#{sort})
+	</insert>
+	
+	<select id="getFriendById" parameterType="string" resultType="com.blog.model.Friend">
+		select * from t_friend where id = #{id}
+	</select>
+	<select id="getBySiteName" parameterType="string" resultType="com.blog.model.Friend">
+		select * from t_friend where siteName = #{siteName}
+	</select>
+	<update id="editFriend" parameterType="com.blog.model.Friend">
+		update t_friend set siteName = #{siteName},siteUrl = #{siteUrl},
+		siteDesc = #{siteDesc},sort = #{sort} 
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteFriend" parameterType="string">
+		delete from t_friend where id = #{id}
+	</delete>
+	
 </mapper>

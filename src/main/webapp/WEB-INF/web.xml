@@ -20,15 +20,15 @@
     </servlet>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value> 
-		classpath:spring/spring-core.xml </param-value>
+		<!-- <param-value>classpath:spring/spring-core.xml </param-value> -->
+		<param-value>classpath:applicationContext.xml </param-value>
 	</context-param>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
 	<listener>
-		<listener-class>com.ziqiang.util.listener.SystemListener</listener-class>
+		<listener-class>com.blog.util.listener.SystemListener</listener-class>
 	</listener>
 
 	<filter>
@@ -50,7 +50,10 @@
 		</init-param> </filter> <filter-mapping> <filter-name>DruidWebStatFilter</filter-name> 
 		<url-pattern>/*</url-pattern> </filter-mapping> -->
 
-
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.jpg</url-pattern>
@@ -91,13 +94,18 @@
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.map</url-pattern>
 	</servlet-mapping>
+		<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.swf</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>springMVC</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>classpath:spring/spring-mvc.xml</param-value>
+			<!-- <param-value>classpath:spring/spring-mvc.xml</param-value> -->
+			<param-value>classpath:springmvc-config.xml</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
